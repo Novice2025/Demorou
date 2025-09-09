@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Chosen Palette: Dark Space Blue with Gradients -->
+    <!-- Application Structure Plan: The SPA is an interactive lesson about the Brazilian slang "Demorou." It features a language toggle, an introductory card explaining the core concept (literal vs. slang meaning), a grid of interactive cards for different real-life situations, and a final quiz section. This structure is designed to guide the user from understanding the concept to seeing it in context and finally applying their knowledge, which is a very effective flow for language learning. -->
+    <!-- Visualization & Content Choices: Report Info: Explanation of the slang term "Demorou." Goal: Teach the meaning and usage to Brazilians learning English equivalents. Viz/Presentation Method: Interactive cards with icons (e.g., 🍻, 🍕) to make scenarios more engaging. Interaction: Click-to-reveal details on cards and a multiple-choice quiz. Justification: This interactive approach is more memorable than static text. Library/Method: Vanilla JS for all interactions. -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <title>Expressões Brasileiras: "Demorou"</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #0A192F;
+            color: #E2E8F0;
+        }
+        .gradient-text-title {
+            background: linear-gradient(90deg, #FF3300, #FFFFCC, #00CCCC, #FF00FF);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .lesson-card {
+            background-color: #112240;
+            border-radius: 1rem;
+            padding: 1.5rem;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .situation-card {
+            cursor: pointer;
+            overflow: hidden;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .situation-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.2), 0 4px 6px -2px rgba(0, 0, 0, 0.1);
+        }
+        .situation-card .details {
+            max-height: 0;
+            opacity: 0;
+            transition: max-height 0.5s ease-in-out, opacity 0.5s ease-in-out, margin-top 0.5s ease-in-out;
+            margin-top: 0;
+        }
+        .situation-card.open .details {
+            max-height: 500px;
+            opacity: 1;
+            margin-top: 1rem;
+        }
+        .quiz-option {
+            background-color: #1e293b;
+            border: 1px solid #334155;
+            transition: background-color 0.2s, border-color 0.2s;
+        }
+        .quiz-option:hover {
+            background-color: #334155;
+            border-color: #475569;
+        }
+        .quiz-option.correct {
+            background-color: #10B981;
+            border-color: #059669;
+        }
+        .quiz-option.incorrect {
+            background-color: #EF4444;
+            border-color: #DC2626;
+        }
+    </style>
+</head>
+<body class="p-4 md:p-8">
+    <div class="max-w-4xl mx-auto space-y-12">
+        
+        <div class="text-right">
+            <button id="language-button" class="px-4 py-2 text-sm font-semibold text-white bg-sky-600 rounded-full shadow-lg hover:bg-sky-700 transition-colors duration-300">
+                Switch to English
+            </button>
+        </div>
+
+        <!-- Portuguese Content -->
+        <div id="portuguese-content">
+            <header class="text-center">
+                <h1 class="text-4xl md:text-5xl font-extrabold">
+                    <span class="gradient-text-title">Decifrando "Demorou"</span>
+                </h1>
+                <p class="mt-2 text-lg text-slate-400">Como uma palavra que significa atraso virou uma gíria para concordar.</p>
+                <p class="text-sm text-slate-500">por Daby</p>
+            </header>
+
+            <main class="space-y-12">
+                <section class="lesson-card">
+                    <h2 class="text-2xl font-bold text-sky-400 mb-4">O Significado Secreto de "Demorou"</h2>
+                    <p class="text-slate-300">
+                        Se você traduzir ao pé da letra, <strong class="text-amber-300">"demorou"</strong> significa "it took a long time". Mas no português brasileiro do dia a dia, a gíria tem um significado completamente oposto! É uma forma animada e informal de concordar com algo na hora.
+                    </p>
+                    <p class="text-slate-300 mt-4">
+                        É a palavra perfeita para mostrar que você topa uma ideia, sem hesitação. Pense nela como o nosso <strong class="text-teal-300">"Fechado!"</strong> ou <strong class="text-teal-300">"Já é!"</strong>.
+                    </p>
+                </section>
+
+                <section class="lesson-card">
+                    <h2 class="text-2xl font-bold text-sky-400 mb-4">A Lógica por Trás da Gíria</h2>
+                    <p class="text-slate-300">
+                        Por que usar uma palavra que remete a atraso para expressar agilidade? A ideia por trás de "demorou" é que a decisão ou a ação já foi processada e concluída. É como se a pessoa estivesse dizendo: <strong class="text-amber-300">"Já tomei minha decisão, o tempo para pensar já passou"</strong>.
+                    </p>
+                    <p class="text-slate-300 mt-4">
+                        É uma forma enfática e concisa de comunicar que a pessoa não precisa de mais tempo para considerar a proposta; ela já está a bordo.
+                    </p>
+                </section>
+
+                <section>
+                    <h2 class="text-2xl font-bold text-center mb-6">Situações Reais <span class="text-base font-normal text-slate-400">(Clique para ver os exemplos)</span></h2>
+                    <div id="situations-container-pt" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <!-- Situation cards will be inserted here by JavaScript -->
+                    </div>
+                </section>
+
+                <section id="quiz-container-pt" class="lesson-card"></section>
+            </main>
+        </div>
+
+        <!-- English Content -->
+        <div id="english-content" class="hidden">
+            <header class="text-center">
+                <h1 class="text-4xl md:text-5xl font-extrabold">
+                    <span class="gradient-text-title">Decoding "Demorou"</span>
+                </h1>
+                <p class="mt-2 text-lg text-slate-400">How a word for "delay" became a slang for agreement.</p>
+                <p class="text-sm text-slate-500">by Daby</p>
+            </header>
+
+            <main class="space-y-12">
+                <section class="lesson-card">
+                    <h2 class="text-2xl font-bold text-sky-400 mb-4">The Secret Meaning of "Demorou"</h2>
+                    <p class="text-slate-300">
+                        If you translate it literally, <strong class="text-amber-300">"demorou"</strong> means "it took a long time." But in everyday Brazilian Portuguese, the slang has the complete opposite meaning! It's a lively and informal way to agree to something on the spot.
+                    </p>
+                    <p class="text-slate-300 mt-4">
+                        It's the perfect word to show you're on board with an idea without hesitation. Think of it as the English <strong class="text-teal-300">"Sounds good!"</strong>, <strong class="text-teal-300">"Let's do it!"</strong>, or <strong class="text-teal-300">"It's on!"</strong>.
+                    </p>
+                </section>
+
+                <section class="lesson-card">
+                    <h2 class="text-2xl font-bold text-sky-400 mb-4">How to Think Like a Brazilian</h2>
+                    <p class="text-slate-300">
+                        For an English speaker, the best way to understand "demorou" is to not think about its literal meaning at all. Instead, focus on the <strong class="text-amber-300">feeling and intent</strong> behind it.
+                    </p>
+                    <p class="text-slate-300 mt-4">
+                        The expression "demorou" is similar to phrases like:
+                        <ul class="list-disc list-inside mt-2 text-slate-300">
+                            <li><strong>"Say no more!"</strong> - The moment you said it, I was already on board.</li>
+                            <li><strong>"Done deal!"</strong> - The agreement has already been made.</li>
+                            <li><strong>"Consider it done!"</strong> - The task or plan is already accepted.</li>
+                        </ul>
+                        It's a verbal shortcut that communicates not just agreement, but enthusiastic and immediate acceptance.
+                    </p>
+                </section>
+
+                <section>
+                    <h2 class="text-2xl font-bold text-center mb-6">Real-Life Situations <span class="text-base font-normal text-slate-400">(Click to see examples)</span></h2>
+                    <div id="situations-container-en" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <!-- Situation cards will be inserted here by JavaScript -->
+                    </div>
+                </section>
+                
+                <section id="quiz-container-en" class="lesson-card"></section>
+            </main>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const situationsData = [
+                {
+                    situation_pt: "Combinando um Happy Hour",
+                    icon: "🍻",
+                    dialogue_pt: "<strong>Amigo 1:</strong> Bora tomar uma depois do trabalho?<br><strong>Amigo 2:</strong> Demorou!",
+                    equivalent_en: "<strong>Friend 1:</strong> Wanna grab a beer after work?<br><strong>Friend 2:</strong> Sounds good!",
+                },
+                {
+                    situation_pt: "Decidindo o almoço",
+                    icon: "🍕",
+                    dialogue_pt: "<strong>Pessoa 1:</strong> Tô pensando em pedir pizza. Topa?<br><strong>Pessoa 2:</strong> Demorou, já tô com fome.",
+                    equivalent_en: "<strong>Person 1:</strong> I'm thinking of ordering pizza. You in?<br><strong>Person 2:</strong> For sure, I'm already hungry.",
+                },
+                {
+                    situation_pt: "Marcando uma viagem",
+                    icon: "✈️",
+                    dialogue_pt: "<strong>Você:</strong> Que tal a gente ir pra praia no feriado?<br><strong>Amigo:</strong> Demorou! Já vou ver a pousada.",
+                    equivalent_en: "<strong>You:</strong> How about we go to the beach for the holiday?<br><strong>Friend:</strong> Let's do it! I'll check for hotels now.",
+                },
+                {
+                    situation_pt: "Confirmando uma tarefa",
+                    icon: "✅",
+                    dialogue_pt: "<strong>Chefe:</strong> Você pode me enviar aquele relatório até o meio-dia?<br><strong>Você:</strong> Demorou.",
+                    equivalent_en: "<strong>Boss:</strong> Can you send me that report by noon?<br><strong>You:</strong> Got it.",
+                },
+                {
+                    situation_pt: "Marcando um jogo de futebol",
+                    icon: "⚽",
+                    dialogue_pt: "<strong>Amigo 1:</strong> Bora jogar uma bola no sábado?<br><strong>Amigo 2:</strong> Demorou, só marcar a hora.",
+                    equivalent_en: "<strong>Friend 1:</strong> Wanna play soccer on Saturday?<br><strong>Friend 2:</strong> Sounds good, just set the time.",
+                },
+                {
+                    situation_pt: "Confirmando a presença em uma festa",
+                    icon: "🎉",
+                    dialogue_pt: "<strong>Pessoa 1:</strong> Tá confirmado a festa na minha casa?<br><strong>Pessoa 2:</strong> Demorou, já tô indo!",
+                    equivalent_en: "<strong>Person 1:</strong> Is the party at my place confirmed?<br><strong>Person 2:</strong> I'm on my way!",
+                }
+            ];
+
+            const quizData = [
+                {
+                    situation_pt: "Seu amigo te chama para ir ao cinema ver um filme que você quer muito assistir. O que você responde?",
+                    options_pt: ["Talvez.", "Demorou!", "Vou pensar."],
+                    answer_pt: "Demorou!",
+                    situation_en: "Your friend invites you to the movies to watch a film you really want to see. What do you say?",
+                    options_en: ["Maybe.", "Let's do it!", "I'll think about it."],
+                    answer_en: "Let's do it!"
+                },
+                {
+                    situation_pt: "Sua colega sugere um novo projeto que parece incrível. Como você mostra que apoia a ideia na hora?",
+                    options_pt: ["Preciso de mais detalhes.", "Não sei se é uma boa ideia.", "Demorou!"],
+                    answer_pt: "Demorou!",
+                    situation_en: "Your colleague suggests a new project that sounds amazing. How do you show you're on board right away?",
+                    options_en: ["I need more details.", "I'm not sure that's a good idea.", "I'm in!"],
+                    answer_en: "I'm in!"
+                }
+            ];
+
+            function createSituationCard(data, lang) {
+                const isPt = lang === 'pt';
+                const dialogue = isPt ? data.dialogue_pt : data.equivalent_en;
+                const equivalent_title = isPt ? "Equivalente em Inglês:" : "Portuguese Dialogue:";
+                const equivalent_text = isPt ? data.equivalent_en : data.dialogue_pt;
+
+                return `
+                    <div class="lesson-card situation-card">
+                        <div class="flex items-center justify-between">
+                            <h3 class="text-xl font-bold text-amber-300">${isPt ? data.situation_pt : data.situation_pt.replace('Combinando um Happy Hour', 'Planning a Happy Hour').replace('Decidindo o almoço', 'Deciding on Lunch').replace('Marcando uma viagem', 'Planning a Trip').replace('Confirmando uma tarefa', 'Confirming a Task').replace('Marcando um jogo de futebol', 'Planning a Soccer Game').replace('Confirmando a presença em uma festa', 'Confirming Attendance at a Party')}</h3>
+                            <span class="text-3xl">${data.icon}</span>
+                        </div>
+                        <div class="details">
+                            <p class="text-slate-300">${dialogue}</p>
+                            <p class="mt-4 italic text-slate-400">
+                                <strong class="text-sky-400">${equivalent_title}</strong><br>${equivalent_text}
+                            </p>
+                        </div>
+                    </div>
+                `;
+            }
+            
+            function renderSituations() {
+                const containerPt = document.getElementById('situations-container-pt');
+                const containerEn = document.getElementById('situations-container-en');
+                
+                containerPt.innerHTML = situationsData.map(d => createSituationCard(d, 'pt')).join('');
+                containerEn.innerHTML = situationsData.map(d => createSituationCard(d, 'en')).join('');
+
+                document.querySelectorAll('.situation-card').forEach(card => {
+                    card.addEventListener('click', () => {
+                        card.classList.toggle('open');
+                    });
+                });
+            }
+
+            let currentQuestionIndex = 0;
+            let score = 0;
+
+            function renderQuiz(lang) {
+                const isPt = lang === 'pt';
+                const quizContainer = document.getElementById(isPt ? 'quiz-container-pt' : 'quiz-container-en');
+                
+                if (currentQuestionIndex >= quizData.length) {
+                    const scoreText = isPt ? `Sua pontuação: ${score} / ${quizData.length}` : `Your score: ${score} / ${quizData.length}`;
+                    quizContainer.innerHTML = `
+                        <h2 class="text-2xl font-bold text-center text-sky-400">${isPt ? "Quiz Finalizado!" : "Quiz Complete!"}</h2>
+                        <p class="text-center text-lg mt-4 text-slate-300">${scoreText}</p>
+                        <div class="text-center mt-6">
+                            <button id="restart-quiz-${lang}" class="px-6 py-2 bg-amber-500 text-white font-semibold rounded-full hover:bg-amber-600 transition-colors">
+                                ${isPt ? "Recomeçar" : "Restart"}
+                            </button>
+                        </div>
+                    `;
+                    document.getElementById(`restart-quiz-${lang}`).addEventListener('click', () => {
+                        currentQuestionIndex = 0;
+                        score = 0;
+                        renderQuiz(lang);
+                    });
+                    return;
+                }
+                
+                const question = quizData[currentQuestionIndex];
+                const situation = isPt ? question.situation_pt : question.situation_en;
+                const options = isPt ? question.options_pt : question.options_en;
+                const answer = isPt ? question.answer_pt : question.answer_en;
+
+                const optionsHtml = options.map(option => {
+                    let dataAnswer = option;
+                    if (!isPt && (option === "Let's do it!" || option === "I'm in!")) {
+                        dataAnswer = "Demorou!";
+                    }
+                     return `<button class="quiz-option w-full text-left p-4 rounded-lg font-semibold" data-answer="${dataAnswer}">${option}</button>`
+                }).join('');
+
+                quizContainer.innerHTML = `
+                    <h2 class="text-2xl font-bold text-center text-sky-400">${isPt ? "Teste seu Conhecimento! 🧐" : "Test Your Knowledge! 🧐"}</h2>
+                    <p class="text-lg font-medium text-slate-300 my-4">${situation}</p>
+                    <div class="space-y-3" id="options-container-${lang}">
+                        ${optionsHtml}
+                    </div>
+                    <div id="feedback-${lang}" class="mt-4 text-center font-bold"></div>
+                `;
+
+                document.querySelectorAll(`#options-container-${lang} .quiz-option`).forEach(button => {
+                    button.addEventListener('click', (e) => {
+                        const selectedAnswer = e.target.dataset.answer;
+                        const feedbackEl = document.getElementById(`feedback-${lang}`);
+                        
+                        document.querySelectorAll(`#options-container-${lang} .quiz-option`).forEach(btn => btn.disabled = true);
+                        
+                        let correctAnswer = answer;
+                         if (!isPt && (answer === "Let's do it!" || answer === "I'm in!")) {
+                            correctAnswer = "Demorou!";
+                         }
+
+                        if (selectedAnswer === correctAnswer) {
+                            e.target.classList.add('correct');
+                            feedbackEl.textContent = isPt ? 'Correto! 🎉' : 'Correct! 🎉';
+                            feedbackEl.className = 'mt-4 text-center font-bold text-green-400';
+                            score++;
+                        } else {
+                            e.target.classList.add('incorrect');
+                            const correctAnswerText = isPt ? answer : (quizData[currentQuestionIndex].options_en.find(opt => opt === answer) || answer);
+                            feedbackEl.textContent = `${isPt ? 'Incorreto. A resposta certa é:' : 'Incorrect. The right answer is:'} ${correctAnswerText}`;
+                            feedbackEl.className = 'mt-4 text-center font-bold text-red-400';
+                             document.querySelector(`#options-container-${lang} .quiz-option[data-answer="${correctAnswer}"]`).classList.add('correct');
+                        }
+                        
+                        setTimeout(() => {
+                            currentQuestionIndex++;
+                            renderQuiz(lang);
+                        }, 2000);
+                    });
+                });
+            }
+
+            const portugueseContent = document.getElementById('portuguese-content');
+            const englishContent = document.getElementById('english-content');
+            const languageButton = document.getElementById('language-button');
+
+            languageButton.addEventListener('click', () => {
+                const isEnglishVisible = !englishContent.classList.contains('hidden');
+                englishContent.classList.toggle('hidden', isEnglishVisible);
+                portugueseContent.classList.toggle('hidden', !isEnglishVisible);
+                languageButton.textContent = isEnglishVisible ? 'Mudar para Português' : 'Switch to English';
+            });
+            
+            renderSituations();
+            renderQuiz('pt');
+            renderQuiz('en');
+        });
+    </script>
+</body>
+</html>
